@@ -1,0 +1,26 @@
+version: "3.7"
+services:
+  
+  # Web proxy for SSL termination
+  caddy:
+    image: docker.io/caddy:2.3.0
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../apps/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ../../data/caddy:/data
+  
+
+  # Web server
+  nginx:
+    image: docker.io/nginx:1.19.9
+    restart: unless-stopped
+    
+    
+    volumes:
+      - ../apps/nginx:/etc/nginx/conf.d/:ro
+    depends_on: ["lms", "cms"]
+
+  

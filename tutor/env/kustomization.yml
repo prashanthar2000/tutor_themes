@@ -1,0 +1,54 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- k8s/namespace.yml
+- k8s/deployments.yml
+- k8s/jobs.yml
+- k8s/services.yml
+- k8s/volumes.yml
+
+
+# namespace to deploy all Resources to
+namespace: openedx
+
+# labels added to all Resources
+# https://kubernetes.io/docs/concepts/overview/working-with-objects/common-labels/
+commonLabels:
+  app.kubernetes.io/instance: openedx-Nr7JylE73ItvlyNYOdrQEF8B
+  app.kubernetes.io/version: 12.0.2
+  app.kubernetes.io/part-of: openedx
+  app.kubernetes.io/managed-by: tutor
+  
+
+configMapGenerator:
+- name: caddy-config
+  files:
+  - apps/caddy/Caddyfile
+- name: openedx-settings-lms
+  files:
+  - apps/openedx/settings/lms/__init__.py
+  - apps/openedx/settings/lms/development.py
+  - apps/openedx/settings/lms/production.py
+  - apps/openedx/settings/lms/test.py
+- name: openedx-settings-cms
+  files:
+  - apps/openedx/settings/cms/__init__.py
+  - apps/openedx/settings/cms/development.py
+  - apps/openedx/settings/cms/production.py
+  - apps/openedx/settings/cms/test.py
+- name: openedx-config
+  files:
+  - apps/openedx/config/cms.env.json
+  - apps/openedx/config/lms.env.json
+- name: nginx-config
+  files:
+  - apps/nginx/_tutor.conf
+  - apps/nginx/cms.conf
+  - apps/nginx/extra.conf
+  - apps/nginx/lms.conf
+- name: redis-config
+  files:
+  - apps/redis/redis.conf
+
+
